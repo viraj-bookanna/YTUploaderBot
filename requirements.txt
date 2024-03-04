@@ -1,0 +1,5 @@
+telethon
+requests
+aiohttp
+aiofiles
+python-dotenv
