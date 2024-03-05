@@ -138,7 +138,7 @@ def authenticate(code):
     }
     response = requests.post('https://oauth2.googleapis.com/token', data=data).json()
     if 'error' in response:
-        raise response['error']
+        raise Exception(response['error'])
     return response
 def getUploadURI(auth, title, description, uploadContentLength):
     jdata = {"snippet":{"title":title,"description":description,"tags":[""]},"status":{"privacyStatus":"private","license":"youtube"}}
@@ -149,7 +149,7 @@ def getUploadURI(auth, title, description, uploadContentLength):
     }
     response = requests.post('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status', json=jdata, headers=headers, allow_redirects=False)
     if len(response.content) > 0 and 'error' in response.json():
-        raise response.json()['error']
+        raise Exception(response.json()['error'])
     return response.headers['location']
 async def file_sender(file_name, callback=None):
     async with aiofiles.open(file_name, 'rb') as f:
@@ -182,7 +182,7 @@ def refreshToken(refresh_token):
     }
     response = requests.post('https://oauth2.googleapis.com/token', data=data).json()
     if 'error' in response:
-        raise response['error']
+        raise Exception(response['error'])
     return response
 def get_auth(chat_id):
     user_data = db_get(chat_id)
@@ -202,8 +202,7 @@ direct_reply = {
     '/help': 'Send any video file or URL to upload into your YouTube channel\nUse /login to authenticate',
 }
 
-@bot.on(events.NewMessage())
-async def handler(event):
+async def all_handler(event):
     urls = find_all_urls(event.message)
     user_data = db_get(event.chat_id, {})
     file = None
@@ -241,6 +240,13 @@ async def handler(event):
         tk = TimeKeeper()
         response = await uploadVideo(auth, file, upload_url, lambda c,t:prog_callback('Up',c,t,msg,filename,tk))
         await msg.edit(f'Successfully uploaded to YouTube\nTitle: {filename}', buttons=[[Button.url('Open YouTube', f'https://youtu.be/{response["id"]}')]])
+
+@bot.on(events.NewMessage())
+async def handler(event):
+    try:
+        await all_handler(event)
+    except Exception as e:
+        await event.respond(repr(e))
 
 with bot:
     bot.run_until_disconnected()

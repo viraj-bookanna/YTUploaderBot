@@ -1,4 +1,7 @@
 telethon
+cryptg
+pillow
+hachoir
 requests
 aiohttp
 aiofiles
