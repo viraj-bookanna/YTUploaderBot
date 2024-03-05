@@ -8,7 +8,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 bot = TelegramClient('bot', os.environ['API_ID'], os.environ['API_HASH']).start(bot_token=os.environ['BOT_TOKEN'])
 YTClient = json.loads(os.environ['YT_CLIENT'])
-LIENT_ID = YTClient['installed']['client_id']
+CLIENT_ID = YTClient['installed']['client_id']
 CLIENT_SECRET = YTClient['installed']['client_secret']
 DOWNLOAD_DIR = os.path.join(os.getcwd(), 'videos')
 AUTH_URL = f"https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&prompt=consent&access_type=offline"
