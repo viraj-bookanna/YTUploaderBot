@@ -199,8 +199,8 @@ def get_auth(chat_id):
         return user_data['auth']['access_token']
 
 direct_reply = {
-    '/start': 'Hi',
-    '/help': 'Send any video file or URL to upload into your YouTube channel\nUse /login to authenticate',
+    '/start': 'Hi 👋',
+    '/help': 'Send any video 🎞 file or URL 🔗 to upload into your YouTube channel\nUse /login to authenticate 🔑',
 }
 
 async def all_handler(event):
@@ -218,17 +218,17 @@ async def all_handler(event):
         await event.respond(direct_reply[event.message.text])
     elif event.message.text=='/login':
         db_put(event.chat_id, {'next': 'login'})
-        await event.respond(f'Open this [LINK]({AUTH_URL}) and send me the given code to authenticate')
+        await event.respond(f'Open this [🔗 LINK]({AUTH_URL}) and send me the given code to authenticate')
     elif user_data.get('next', '')=='login':
         try:
             user_data['auth'] = authenticate(event.message.text)
             user_data['auth']['expire_time'] = time.time()+user_data['auth']['expires_in']
-            await event.respond('Login successful')
+            await event.respond('Login successful ✅')
             db_put(event.chat_id, user_data)
         except Exception as e:
             await event.respond(repr(e))
     else:
-        await event.respond('unknown command')
+        await event.respond('❌ unknown command ❌')
     if file is not None:
         auth = get_auth(event.chat_id)
         filename = os.path.basename(file)
@@ -240,7 +240,7 @@ async def all_handler(event):
         )
         tk = TimeKeeper()
         response = await uploadVideo(auth, file, upload_url, lambda c,t:prog_callback('Up',c,t,msg,filename,tk))
-        await msg.edit(f'Successfully uploaded to YouTube\nTitle: {filename}', buttons=[[Button.url('Open YouTube', f'https://youtu.be/{response["id"]}')]])
+        await msg.edit(f'Successfully uploaded to YouTube ▶️\nTitle: {filename}', buttons=[[Button.url('🔗 Open YouTube', f'https://youtu.be/{response["id"]}')]])
 
 @bot.on(events.NewMessage())
 async def handler(event):
